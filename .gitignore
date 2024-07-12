@@ -10,6 +10,9 @@
 # ModusToolbox library repos or information about library dependencies
 libs/
 
+#Ignore the mtb_shared folder
+mtb_shared/
+
 # Eclipse IDE for ModusToolbox files
 .metadata/
 # .cyignore

@@ -1,6 +1,7 @@
 #include "cyhal.h"
 #include "cy8ckit_028_tft.h"
 #include "GUI.h"
+#include "cy_retarget_io.h"
 
 struct tm current_date_time = {0};
 //x = 320 en y = 240
@@ -21,6 +22,8 @@ char secondBuf[4];
 char weekdayBuf[10];
 char dayMonthBuf[10];
 char yearBuf[8];
+
+uint8_t lightData;
 
 void printfTFT(cyhal_rtc_t *rtc_ptr)
 {
@@ -52,5 +55,17 @@ void printfTFT(cyhal_rtc_t *rtc_ptr)
 	GUI_DispStringAt(yearBuf, YEAR_X, YEAR_Y);
 }
 
-
-
+void tftColor(mtb_light_sensor_t *lightObj_ptr)
+{
+	uint8_t lightData;
+	lightData = mtb_light_sensor_light_level(lightObj_ptr); //Get light level
+	if(lightData < 10)
+	{
+		GUI_SetColor(GUI_DARKRED);
+	}
+	else
+	{
+		GUI_SetColor(GUI_WHITE);
+	}
+	printf("test = %d\r\n", lightData);
+}

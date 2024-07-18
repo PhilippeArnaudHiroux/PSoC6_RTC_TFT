@@ -4,10 +4,12 @@
 #include "cy8ckit_028_tft.h"
 #include "GUI.h"
 
-#define TM_YEAR_BASE (1900u)
+#define TM_YEAR_BASE 		1900u
 
-cyhal_rtc_t 	my_rtc;
-cyhal_timer_t 	timer_obj;
+//Objects
+cyhal_rtc_t 		my_rtc_obj;
+cyhal_timer_t 		timer_obj;
+mtb_light_sensor_t 	*lightObj;
 
 char buffer[80];
 
@@ -31,6 +33,7 @@ struct tm new_date_time =
 struct tm current_date_timee = {0};
 
 void printfTFT(cyhal_rtc_t *rtc_ptr);
+void tftColor(mtb_light_sensor_t *lightObj_ptr);
 
 const cyhal_timer_cfg_t timer_cfg =
 {
@@ -44,11 +47,11 @@ const cyhal_timer_cfg_t timer_cfg =
 
 static void isr_timer(void* callback_arg, cyhal_timer_event_t event)
 {
-	cyhal_rtc_read(&my_rtc, &current_date_timee);
+	cyhal_rtc_read(&my_rtc_obj, &current_date_timee);
 	strftime(buffer, sizeof(buffer), "%c", &current_date_timee);
 	printf("%s - TIMER\r\n", buffer);
 
-	printfTFT(&my_rtc);
+	printfTFT(&my_rtc_obj);
 }
 
 int main(void)
@@ -66,8 +69,8 @@ int main(void)
     GUI_Init();
 
     //Init RTC
-    cyhal_rtc_init(&my_rtc);
-    cyhal_rtc_write(&my_rtc, &new_date_time);
+    cyhal_rtc_init(&my_rtc_obj);
+    cyhal_rtc_write(&my_rtc_obj, &new_date_time);
 
     //Init timer
     cyhal_timer_init(&timer_obj, NC, NULL);
@@ -77,10 +80,11 @@ int main(void)
 	cyhal_timer_enable_event(&timer_obj, CYHAL_TIMER_IRQ_TERMINAL_COUNT, 3, true);
 	cyhal_timer_start(&timer_obj);
 
-	printfTFT(&my_rtc);
+	lightObj = cy8ckit_028_tft_get_light_sensor();
 
     for(;;)
     {
+    	tftColor(lightObj);
     	cyhal_syspm_sleep();
     }
 }

@@ -5,16 +5,15 @@
 #include "GUI.h"
 
 #define TM_YEAR_BASE (1900u)
-#define RTC_CALLBACK_ARG (NULL)
-#define RTC_INTERRUPT_PRIORITY (1u)
 
 cyhal_rtc_t 	my_rtc;
 cyhal_timer_t 	timer_obj;
-char        	buffer[80];
+
+char buffer[80];
 
 const int mday = 3, month = 3, year = 2020; // Day of month, month and year
 const int hours = 8, minutes = 10, seconds = 0; // Hours, minutes and seconds
-const int wday = 3; // Days from Sunday. Sunday is 0, Monday is 1 and so on.
+const int wday = 4; // Days from Sunday. Sunday is 0, Monday is 1 and so on.
 const int dst  = 0; // Daylight Savings. 0 - Disabled, 1 - Enabled
 
 // Setting the tm structure as 08 HRS:10 MIN:10 SEC ; 3rd March 2020; Wednesday ; DST off
@@ -29,7 +28,9 @@ struct tm new_date_time =
 	.tm_wday  = wday,
 	.tm_isdst = dst
 };
-struct tm current_date_time = {0};
+struct tm current_date_timee = {0};
+
+void printfTFT(cyhal_rtc_t *rtc_ptr);
 
 const cyhal_timer_cfg_t timer_cfg =
 {
@@ -41,9 +42,14 @@ const cyhal_timer_cfg_t timer_cfg =
 	.value         = 0                   // Initial value of counter
 };
 
-//void snippet_cyhal_timer_event_interrupt();
-static void isr_timer(void* callback_arg, cyhal_timer_event_t event);
+static void isr_timer(void* callback_arg, cyhal_timer_event_t event)
+{
+	cyhal_rtc_read(&my_rtc, &current_date_timee);
+	strftime(buffer, sizeof(buffer), "%c", &current_date_timee);
+	printf("%s - TIMER\r\n", buffer);
 
+	printfTFT(&my_rtc);
+}
 
 int main(void)
 {
@@ -71,48 +77,10 @@ int main(void)
 	cyhal_timer_enable_event(&timer_obj, CYHAL_TIMER_IRQ_TERMINAL_COUNT, 3, true);
 	cyhal_timer_start(&timer_obj);
 
-	GUI_SetFont(&GUI_FontD80);
-
-	cyhal_rtc_read(&my_rtc, &current_date_time);
-	strftime(buffer, sizeof(buffer), "%H:%M", &current_date_time);
-	GUI_DispStringAt(buffer, 0, 0);
-
-	printf("DONEE\r\n");
-
-	//snippet_cyhal_timer_event_interrupt();
+	printfTFT(&my_rtc);
 
     for(;;)
     {
     	cyhal_syspm_sleep();
     }
 }
-
-static void isr_timer(void* callback_arg, cyhal_timer_event_t event)
-{
-	cyhal_rtc_read(&my_rtc, &current_date_time);
-	strftime(buffer, sizeof(buffer), "%c", &current_date_time);
-	printf("%s - TIMER\r\n", buffer);
-	strftime(buffer, sizeof(buffer), "%H:%M", &current_date_time);
-	GUI_DispStringAt(buffer, 0, 0);
-}
-/*
-void snippet_cyhal_timer_event_interrupt()
-{
-    const cyhal_timer_cfg_t timer_cfg =
-    {
-        .compare_value = 0,                  // Timer compare value, not used
-        .period        = 600000,             // Defines the timer period for 15 seconds
-        .direction     = CYHAL_TIMER_DIR_UP, // Timer counts up
-        .is_compare    = false,              // Don't use compare mode
-        .is_continuous = true,               // Run the timer indefinitely
-        .value         = 0                   // Initial value of counter
-    };
-
-    cyhal_timer_init(&timer_obj, NC, NULL);
-    cyhal_timer_configure(&timer_obj, &timer_cfg);
-    cyhal_timer_set_frequency(&timer_obj, 10000);
-	cyhal_timer_register_callback(&timer_obj, isr_timer, NULL);
-	cyhal_timer_enable_event(&timer_obj, CYHAL_TIMER_IRQ_TERMINAL_COUNT, 3, true);
-	cyhal_timer_start(&timer_obj);
-}
-*/

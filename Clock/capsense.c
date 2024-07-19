@@ -9,14 +9,36 @@
 
 bool scanComplete = false;
 
+//Capsense functions from the capsense.c file
 void initCapSense(void);										//Declare the function initCapSense
 static void capsense_isr(void);									//Declare the function capsense_isr
 void endScanCallback(cy_stc_active_scan_sns_t * ptrActiveScan);	//Declare the function endScanCallback
 void capsenseSlider(void);										//Declare the fucntion processTouch
-void capsenseButtonLeft(void);
-void capsenseButtonRight(void);
+int capsenseButtonLeft(int value);
+int capsenseButtonRight(int value);
 
-int i = 0;	//Variable to save the index for the flash memory
+//TFT-shield functions from the tftDisplay.c file
+void printfDate();
+void printfYear(int value);
+void printfMonth(int value);
+void printfDay(int value);
+void printfWeekday(int value);
+void printfHour(int value);
+void printfMinute(int value);
+void printfSecond(int value);
+void clearTFT();
+
+int statement = 0;
+float valueTouch = 0;
+float valueRelease = 0;
+
+int yearr = 2000;
+int monthh = 0;
+int dayy = 1;
+int weekdayy = 1;
+int hourr = 0;
+int minutee = 0;
+int secondd = 0;
 
 void capsense(void)
 {
@@ -24,6 +46,7 @@ void capsense(void)
     cyhal_gpio_init(P0_4, CYHAL_GPIO_DIR_INPUT, CYHAL_GPIO_DRIVE_NONE, false);	//Init SW2
 	Cy_CapSense_ScanAllWidgets(&cy_capsense_context);							//Start first scan
 
+	printfDate();
     for (;;)
     {
     	if(scanComplete == true)									//Wait for scan to complete
@@ -31,13 +54,71 @@ void capsense(void)
     		Cy_CapSense_ProcessAllWidgets(&cy_capsense_context);	//Process scan data
     		Cy_CapSense_RunTuner(&cy_capsense_context);				//Update tuner
     		capsenseSlider();											//Update LED according to any touches
-    		capsenseButtonLeft();
-    		capsenseButtonRight();
+    		//capsenseButtonLeft();
+    		//capsenseButtonRight();
 			Cy_CapSense_ScanAllWidgets(&cy_capsense_context);		//Start next scan
 			scanComplete = false;									//Make scanComplete equal to false
+
+			switch(statement)
+			{
+				case -1:
+					statement = 5;
+					break;
+				case 0: 	//Year
+					yearr = capsenseButtonLeft(yearr);
+					yearr = capsenseButtonRight(yearr);
+					printfYear(yearr);
+					break;
+				case 1:		//Month
+					monthh = capsenseButtonLeft(monthh);
+					monthh = capsenseButtonRight(monthh);
+					if(monthh == -1){monthh = 11;}
+					if(monthh == 12){monthh = 0;}
+					printfMonth(monthh);
+					break;
+				case 2:		//Day
+					dayy = capsenseButtonLeft(dayy);
+					dayy = capsenseButtonRight(dayy);
+					if(dayy == 0){dayy = 31;}
+					if(dayy == 32){dayy = 1;}
+					printfDay(dayy);
+					break;
+				case 3:		//Weekday
+					weekdayy = capsenseButtonLeft(weekdayy);
+					weekdayy = capsenseButtonRight(weekdayy);
+					if(weekdayy == -1){weekdayy = 6;}
+					if(weekdayy == 7){weekdayy = 0;}
+					printfWeekday(weekdayy);
+					break;
+				case 4:		//Hour
+					hourr = capsenseButtonLeft(hourr);
+					hourr = capsenseButtonRight(hourr);
+					if(hourr == 24){hourr = 0;}
+					if(hourr == -1){hourr = 23;}
+					printfHour(hourr);
+					break;
+				case 5:		//Minute
+					minutee = capsenseButtonLeft(minutee);
+					minutee = capsenseButtonRight(minutee);
+					if(minutee == -1){minutee = 59;}
+					if(minutee == 60){minutee = 0;}
+					printfMinute(minutee);
+					break;
+				case 6:		//Second
+					secondd = capsenseButtonLeft(secondd);
+					secondd = capsenseButtonRight(secondd);
+					if(secondd == -1){secondd = 59;}
+					if(secondd == 60){secondd = 0;}
+					printfSecond(secondd);
+					break;
+				case 7:
+					statement = 0;
+					break;
+			}
     	}
     	if(cyhal_gpio_read(P0_4) == 0){break;}						//If SW2 is pressed, go out of the for loop
     }
+    clearTFT();
 }
 
 void initCapSense(void) //Initializes the CSD HW block for touch sensing
@@ -55,32 +136,25 @@ void initCapSense(void) //Initializes the CSD HW block for touch sensing
 	Cy_CapSense_RegisterCallback(CY_CAPSENSE_END_OF_SCAN_E, endScanCallback, &cy_capsense_context);	//Initialize end of scan callback
 }
 
-void capsenseButtonLeft(void)
+int capsenseButtonLeft(int value)
 {
 	uint32_t button0_status;					//Vars to hold widget statuses
 	static uint32_t button0_status_prev;		//Vars to hold previous widget statuses
 	button0_status = Cy_CapSense_IsSensorActive(CY_CAPSENSE_BUTTON0_WDGT_ID, CY_CAPSENSE_BUTTON0_SNS0_ID, &cy_capsense_context);	//Get button0 status
-
-	if((button0_status != 0U) && (button0_status != button0_status_prev))
-	{
-		printf("left button\r\n");									//Print out the text
-	}
-
+	if((button0_status != 0U) && (button0_status != button0_status_prev)){value--;}
 	button0_status_prev = button0_status;	//Update previous touch status
+	return value;
 }
 
-void capsenseButtonRight(void)
+int capsenseButtonRight(int value)
 {
 	uint32_t button1_status;					//Vars to hold widget statuses
 	static uint32_t button1_status_prev;		//Vars to hold previous widget statuses
 	button1_status = Cy_CapSense_IsSensorActive(CY_CAPSENSE_BUTTON1_WDGT_ID, CY_CAPSENSE_BUTTON1_SNS0_ID, &cy_capsense_context);	//Get button1 status
 
-	if((button1_status != 0U) && (button1_status != button1_status_prev))
-	{
-		printf("Right button\r\n");									//Print out the text
-	}
-
+	if((button1_status != 0U) && (button1_status != button1_status_prev)){value++;}
 	button1_status_prev = button1_status;	//Update previous touch status
+	return value;
 }
 
 void capsenseSlider(void) 						//Check if CapSense buttons were pressed and update the LED state accordingly
@@ -97,16 +171,17 @@ void capsenseSlider(void) 						//Check if CapSense buttons were pressed and upd
 
 	if((slider_touch_status != 0U) && (was_touched == 0U))
 	{
-		float value = (1.0 - ((float)slider_pos / (float)cy_capsense_context.ptrWdConfig[CY_CAPSENSE_LINEARSLIDER0_WDGT_ID].xResolution)) * 100; //Calculate de value of the slider
-		printf("Value aanraken: %.0f\r\n", value);
+		valueTouch = (1.0 - ((float)slider_pos / (float)cy_capsense_context.ptrWdConfig[CY_CAPSENSE_LINEARSLIDER0_WDGT_ID].xResolution)) * 100; //Calculate de value of the slider
 		was_touched = 1;  // Update touch status
 	}
 
 	if (slider_touch_status == 0U && was_touched == 1U)
 	{
-		float value = (1.0 - ((float)slider_pos / (float)cy_capsense_context.ptrWdConfig[CY_CAPSENSE_LINEARSLIDER0_WDGT_ID].xResolution)) * 100; //Calculate de value of the slider
-		printf("Value loslaten: %.0f\r\n", value);
+		valueRelease = (1.0 - ((float)slider_pos / (float)cy_capsense_context.ptrWdConfig[CY_CAPSENSE_LINEARSLIDER0_WDGT_ID].xResolution)) * 100; //Calculate de value of the slider
 		was_touched = 0;  // Update touch status
+
+		if(valueRelease > valueTouch){statement--;}
+		else if(valueRelease < valueTouch){statement++;}
 	}
 }
 

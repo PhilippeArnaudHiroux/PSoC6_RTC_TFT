@@ -34,6 +34,7 @@ struct tm current_date_timee = {0};
 
 void printfTFT(cyhal_rtc_t *rtc_ptr);
 void tftColor(mtb_light_sensor_t *lightObj_ptr);
+void capsense();
 
 const cyhal_timer_cfg_t timer_cfg =
 {
@@ -67,6 +68,10 @@ int main(void)
 	//Init tft-shield
     cy8ckit_028_tft_init (NULL, NULL, NULL, NULL);
     GUI_Init();
+    lightObj = cy8ckit_028_tft_get_light_sensor();
+
+    capsense();
+
 
     //Init RTC
     cyhal_rtc_init(&my_rtc_obj);
@@ -80,7 +85,6 @@ int main(void)
 	cyhal_timer_enable_event(&timer_obj, CYHAL_TIMER_IRQ_TERMINAL_COUNT, 3, true);
 	cyhal_timer_start(&timer_obj);
 
-	lightObj = cy8ckit_028_tft_get_light_sensor();
 
     for(;;)
     {

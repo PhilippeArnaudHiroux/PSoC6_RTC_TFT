@@ -69,3 +69,132 @@ void tftColor(mtb_light_sensor_t *lightObj_ptr)
 	}
 	printf("test = %d\r\n", lightData);
 }
+
+void printfDate()
+{
+	char str[10];
+	GUI_SetFont(&GUI_Font32B_ASCII);
+	GUI_DispStringAt("Year: ", 0, 0);
+	GUI_DispStringAt(itoa(2000, str, 10), 150, 0);
+	GUI_DispStringAt("Month: ", 0, 30);
+	GUI_DispStringAt("January", 150, 30);
+	GUI_DispStringAt("Day : ", 0, 60);
+	GUI_DispStringAt(itoa(1, str, 10), 150, 60);
+	GUI_DispStringAt("Weekday: ", 0, 90);
+	GUI_DispStringAt("Monday", 150, 90);
+	GUI_DispStringAt("Hour: ", 0, 120);
+	GUI_DispStringAt(itoa(0, str, 10), 150, 120);
+	GUI_DispStringAt("Minute: ", 0, 150);
+	GUI_DispStringAt(itoa(0, str, 10), 150, 150);
+	GUI_DispStringAt("Second: ", 0, 180);
+	GUI_DispStringAt(itoa(0, str, 10), 150, 180);
+}
+
+void printfYear(int value)
+{
+	char str[10];
+	GUI_DispStringAt(itoa(value, str, 10), 150, 0);
+}
+
+void printfMonth(int value)
+{
+	switch(value)
+	{
+		case 0:
+			GUI_DispStringAt("January      ", 150, 30);
+			break;
+		case 1:
+			GUI_DispStringAt("February     ", 150, 30);
+			break;
+		case 2:
+			GUI_DispStringAt("March        ", 150, 30);
+			break;
+		case 3:
+			GUI_DispStringAt("April        ", 150, 30);
+			break;
+		case 4:
+			GUI_DispStringAt("May          ", 150, 30);
+			break;
+		case 5:
+			GUI_DispStringAt("June         ", 150, 30);
+			break;
+		case 6:
+			GUI_DispStringAt("July         ", 150, 30);
+			break;
+		case 7:
+			GUI_DispStringAt("August       ", 150, 30);
+			break;
+		case 8:
+			GUI_DispStringAt("September", 150, 30);
+			break;
+		case 9:
+			GUI_DispStringAt("October      ", 150, 30);
+			break;
+		case 10:
+			GUI_DispStringAt("November     ", 150, 30);
+			break;
+		case 11:
+			GUI_DispStringAt("December   ", 150, 30);
+			break;
+	}
+}
+
+void printfDay(int value)
+{
+	char str[10];
+	itoa(value, str, 10);
+	GUI_DispStringAt(strcat(str, "  "), 150, 60);
+}
+
+void printfWeekday(int value)
+{
+	switch(value)
+	{
+		case 0:
+			GUI_DispStringAt("Sunday      ", 150, 90);
+			break;
+		case 1:
+			GUI_DispStringAt("Monday      ", 150, 90);
+			break;
+		case 2:
+			GUI_DispStringAt("Tuesday     ", 150, 90);
+			break;
+		case 3:
+			GUI_DispStringAt("Wednesday", 150, 90);
+			break;
+		case 4:
+			GUI_DispStringAt("Thursday    ", 150, 90);
+			break;
+		case 5:
+			GUI_DispStringAt("Friday      ", 150, 90);
+			break;
+		case 6:
+			GUI_DispStringAt("Saturday    ", 150, 90);
+			break;
+	}
+}
+
+void printfHour(int value)
+{
+	char str[10];
+	itoa(value, str, 10);
+	GUI_DispStringAt(strcat(str, "  "), 150, 120);
+}
+
+void printfMinute(int value)
+{
+	char str[10];
+	itoa(value, str, 10);
+	GUI_DispStringAt(strcat(str, "  "), 150, 150);
+}
+void printfSecond(int value)
+{
+	char str[10];
+	itoa(value, str, 10);
+	GUI_DispStringAt(strcat(str, "  "), 150, 180);
+}
+
+void clearTFT()
+{
+	GUI_Clear();
+}

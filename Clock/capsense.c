@@ -60,7 +60,7 @@ void capsense(void)
 			switch(statement)
 			{
 				case -1:
-					statement = 6;
+					statement = 5;
 					break;
 				case 0: 	//Year
 					year = capsenseButtonLeft(year);
@@ -175,8 +175,8 @@ void capsenseSlider(void) 						//Check if CapSense buttons were pressed and upd
 		valueRelease = (1.0 - ((float)slider_pos / (float)cy_capsense_context.ptrWdConfig[CY_CAPSENSE_LINEARSLIDER0_WDGT_ID].xResolution)) * 100; //Calculate de value of the slider
 		was_touched = 0;  // Update touch status
 
-		if(valueRelease > valueTouch){statement--;}
-		else if(valueRelease < valueTouch){statement++;}
+		if(valueTouch < 45 && valueRelease > 55){statement--;}
+		else if(valueTouch > 55 && valueRelease < 45){statement++;}
 	}
 }
 

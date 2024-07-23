@@ -147,20 +147,20 @@ void printfHour(int value)
 {
 	char str[10];
 	itoa(value, str, 10);
-	GUI_DispStringAt(strcat(str, "  "), 150, 120);
+	GUI_DispStringAt(strcat(str, "  "), 150, 90);
 }
 
 void printfMinute(int value)
 {
 	char str[10];
 	itoa(value, str, 10);
-	GUI_DispStringAt(strcat(str, "  "), 150, 150);
+	GUI_DispStringAt(strcat(str, "  "), 150, 120);
 }
 void printfSecond(int value)
 {
 	char str[10];
 	itoa(value, str, 10);
-	GUI_DispStringAt(strcat(str, "  "), 150, 180);
+	GUI_DispStringAt(strcat(str, "  "), 150, 150);
 }
 
 void clearTFT()

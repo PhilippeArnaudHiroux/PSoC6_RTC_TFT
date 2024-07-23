@@ -1,4 +1,3 @@
-
 #include "cy_pdl.h"
 #include "cyhal.h"
 #include "cybsp.h"
@@ -110,7 +109,6 @@ void capsense(void)
     	if(cyhal_gpio_read(P0_4) == 0)
     	{
     		clearTFT();
-			printf("DEBUG - %d\r\n", weekday);
     		break;
     	}
     }

@@ -59,14 +59,8 @@ void tftColor(mtb_light_sensor_t *lightObj_ptr)
 {
 	uint8_t lightData;
 	lightData = mtb_light_sensor_light_level(lightObj_ptr); //Get light level
-	if(lightData < 10)
-	{
-		GUI_SetColor(GUI_DARKRED);
-	}
-	else
-	{
-		GUI_SetColor(GUI_WHITE);
-	}
+	if(lightData < 10){GUI_SetColor(GUI_DARKRED);}
+	else{GUI_SetColor(GUI_WHITE);}
 }
 
 void printfDate()
@@ -163,7 +157,4 @@ void printfSecond(int value)
 	GUI_DispStringAt(strcat(str, "  "), 150, 150);
 }
 
-void clearTFT()
-{
-	GUI_Clear();
-}
+void clearTFT(){GUI_Clear();}

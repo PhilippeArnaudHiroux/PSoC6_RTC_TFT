@@ -1,3 +1,4 @@
+
 #include "cy_pdl.h"
 #include "cyhal.h"
 #include "cybsp.h"
@@ -22,7 +23,6 @@ void printfDate();
 void printfYear(int value);
 void printfMonth(int value);
 void printfDay(int value);
-void printfWeekday(int value);
 void printfHour(int value);
 void printfMinute(int value);
 void printfSecond(int value);
@@ -32,13 +32,13 @@ int statement = 0;
 float valueTouch = 0;
 float valueRelease = 0;
 
-int yearr = 2000;
-int monthh = 0;
-int dayy = 1;
-int weekdayy = 1;
-int hourr = 0;
-int minutee = 0;
-int secondd = 0;
+int year = 2000;
+int month = 0;
+int day = 1;
+int weekday = 1;
+int hour = 0;
+int minute = 0;
+int second = 0;
 
 void capsense(void)
 {
@@ -54,71 +54,66 @@ void capsense(void)
     		Cy_CapSense_ProcessAllWidgets(&cy_capsense_context);	//Process scan data
     		Cy_CapSense_RunTuner(&cy_capsense_context);				//Update tuner
     		capsenseSlider();											//Update LED according to any touches
-    		//capsenseButtonLeft();
-    		//capsenseButtonRight();
 			Cy_CapSense_ScanAllWidgets(&cy_capsense_context);		//Start next scan
 			scanComplete = false;									//Make scanComplete equal to false
 
 			switch(statement)
 			{
 				case -1:
-					statement = 5;
+					statement = 6;
 					break;
 				case 0: 	//Year
-					yearr = capsenseButtonLeft(yearr);
-					yearr = capsenseButtonRight(yearr);
-					printfYear(yearr);
+					year = capsenseButtonLeft(year);
+					year = capsenseButtonRight(year);
+					printfYear(year);
 					break;
 				case 1:		//Month
-					monthh = capsenseButtonLeft(monthh);
-					monthh = capsenseButtonRight(monthh);
-					if(monthh == -1){monthh = 11;}
-					if(monthh == 12){monthh = 0;}
-					printfMonth(monthh);
+					month = capsenseButtonLeft(month);
+					month = capsenseButtonRight(month);
+					if(month == -1){month = 11;}
+					if(month == 12){month = 0;}
+					printfMonth(month);
 					break;
 				case 2:		//Day
-					dayy = capsenseButtonLeft(dayy);
-					dayy = capsenseButtonRight(dayy);
-					if(dayy == 0){dayy = 31;}
-					if(dayy == 32){dayy = 1;}
-					printfDay(dayy);
+					day = capsenseButtonLeft(day);
+					day = capsenseButtonRight(day);
+					if(day == 0){day = 31;}
+					if(day == 32){day = 1;}
+					printfDay(day);
 					break;
-				case 3:		//Weekday
-					weekdayy = capsenseButtonLeft(weekdayy);
-					weekdayy = capsenseButtonRight(weekdayy);
-					if(weekdayy == -1){weekdayy = 6;}
-					if(weekdayy == 7){weekdayy = 0;}
-					printfWeekday(weekdayy);
+				case 3:		//Hour
+					hour = capsenseButtonLeft(hour);
+					hour = capsenseButtonRight(hour);
+					if(hour == 24){hour = 0;}
+					if(hour == -1){hour = 23;}
+					printfHour(hour);
 					break;
-				case 4:		//Hour
-					hourr = capsenseButtonLeft(hourr);
-					hourr = capsenseButtonRight(hourr);
-					if(hourr == 24){hourr = 0;}
-					if(hourr == -1){hourr = 23;}
-					printfHour(hourr);
+				case 4:		//Minute
+					minute = capsenseButtonLeft(minute);
+					minute = capsenseButtonRight(minute);
+					if(minute == -1){minute = 59;}
+					if(minute == 60){minute = 0;}
+					printfMinute(minute);
 					break;
-				case 5:		//Minute
-					minutee = capsenseButtonLeft(minutee);
-					minutee = capsenseButtonRight(minutee);
-					if(minutee == -1){minutee = 59;}
-					if(minutee == 60){minutee = 0;}
-					printfMinute(minutee);
+				case 5:		//Second
+					second = capsenseButtonLeft(second);
+					second = capsenseButtonRight(second);
+					if(second == -1){second = 59;}
+					if(second == 60){second = 0;}
+					printfSecond(second);
 					break;
-				case 6:		//Second
-					secondd = capsenseButtonLeft(secondd);
-					secondd = capsenseButtonRight(secondd);
-					if(secondd == -1){secondd = 59;}
-					if(secondd == 60){secondd = 0;}
-					printfSecond(secondd);
-					break;
-				case 7:
+				case 6:
 					statement = 0;
 					break;
 			}
     	}
-    	if(cyhal_gpio_read(P0_4) == 0){break;}						//If SW2 is pressed, go out of the for loop
+    	if(cyhal_gpio_read(P0_4) == 0)
+    	{
+    		clearTFT();
+			printf("DEBUG - %d\r\n", weekday);
+    		break;
+    	}
     }
-    clearTFT();
 }
 
 void initCapSense(void) //Initializes the CSD HW block for touch sensing
@@ -186,4 +181,12 @@ void capsenseSlider(void) 						//Check if CapSense buttons were pressed and upd
 }
 
 static void capsense_isr(void){Cy_CapSense_InterruptHandler(CYBSP_CSD_HW, &cy_capsense_context);}	//Interrupt Service Routines and Callbacks
-void endScanCallback(cy_stc_active_scan_sns_t * ptrActiveScan){scanComplete = true;}				//Make scanComplete equal to true
+void endScanCallback(cy_stc_active_scan_sns_t * ptrActiveScan){scanComplete = true;}		//Make scanComplete equal to true
+
+const int getYear(){return year;}
+const int getMonth(){return month;}
+const int getDay(){return day;}
+const int getHour(){return hour;}
+const int getMinute(){return minute;}
+const int getSecond(){return second;}
+

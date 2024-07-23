@@ -12,29 +12,18 @@ cyhal_timer_t 		timer_obj;
 mtb_light_sensor_t 	*lightObj;
 
 char buffer[80];
-
-const int mday = 3, month = 3, year = 2020; // Day of month, month and year
-const int hours = 8, minutes = 10, seconds = 0; // Hours, minutes and seconds
-const int wday = 4; // Days from Sunday. Sunday is 0, Monday is 1 and so on.
+struct tm new_date_time = {0};
 const int dst  = 0; // Daylight Savings. 0 - Disabled, 1 - Enabled
-
-// Setting the tm structure as 08 HRS:10 MIN:10 SEC ; 3rd March 2020; Wednesday ; DST off
-struct tm new_date_time =
-{
-	.tm_sec   = seconds,
-	.tm_min   = minutes,
-	.tm_hour  = hours,
-	.tm_mday  = mday,
-	.tm_mon   = month - 1,
-	.tm_year  = year - TM_YEAR_BASE,
-	.tm_wday  = wday,
-	.tm_isdst = dst
-};
-struct tm current_date_timee = {0};
 
 void printfTFT(cyhal_rtc_t *rtc_ptr);
 void tftColor(mtb_light_sensor_t *lightObj_ptr);
 void capsense();
+const int getYear();
+const int getMonth();
+const int getDay();
+const int getHour();
+const int getMinute();
+const int getSecond();
 
 const cyhal_timer_cfg_t timer_cfg =
 {
@@ -46,14 +35,7 @@ const cyhal_timer_cfg_t timer_cfg =
 	.value         = 0                   // Initial value of counter
 };
 
-static void isr_timer(void* callback_arg, cyhal_timer_event_t event)
-{
-	cyhal_rtc_read(&my_rtc_obj, &current_date_timee);
-	strftime(buffer, sizeof(buffer), "%c", &current_date_timee);
-	printf("%s - TIMER\r\n", buffer);
-
-	printfTFT(&my_rtc_obj);
-}
+static void isr_timer(void* callback_arg, cyhal_timer_event_t event){printfTFT(&my_rtc_obj);}
 
 int main(void)
 {
@@ -72,9 +54,16 @@ int main(void)
 
     capsense();
 
-
     //Init RTC
     cyhal_rtc_init(&my_rtc_obj);
+    new_date_time.tm_year = getYear() - TM_YEAR_BASE;
+    new_date_time.tm_mon = getMonth();
+    new_date_time.tm_mday = getDay();
+    new_date_time.tm_hour = getHour();
+    new_date_time.tm_min = getMinute();
+    new_date_time.tm_sec = getSecond();
+    new_date_time.tm_isdst = dst;
+
     cyhal_rtc_write(&my_rtc_obj, &new_date_time);
 
     //Init timer
@@ -84,7 +73,6 @@ int main(void)
 	cyhal_timer_register_callback(&timer_obj, isr_timer, NULL);
 	cyhal_timer_enable_event(&timer_obj, CYHAL_TIMER_IRQ_TERMINAL_COUNT, 3, true);
 	cyhal_timer_start(&timer_obj);
-
 
     for(;;)
     {

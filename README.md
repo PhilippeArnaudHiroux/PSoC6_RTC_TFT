@@ -29,7 +29,7 @@ WIth the left capsence button (button 0) you can decrease your time element, and
 
 <details>
   <summary>Flowchart of configuring year</summary>
-  ![Year_Flowchart](Documents/Flowchart/Year_Flowchart.jpg)
+  ![Year_Flowchart](https://github.com/PhilippeArnaudHiroux/PSoC6_RTC_TFT/blob/main/Documents/Flowchart/Year_Flowchart.jpg)
 </details>
 
 The values on the TFT-display will be updated and shown.

@@ -42,7 +42,6 @@ int second = 0;
 void capsense(void)
 {
 	initCapSense();																//Init capsense
-    cyhal_gpio_init(P0_4, CYHAL_GPIO_DIR_INPUT, CYHAL_GPIO_DRIVE_NONE, false);	//Init SW2
 	Cy_CapSense_ScanAllWidgets(&cy_capsense_context);							//Start first scan
 
 	printfDate();

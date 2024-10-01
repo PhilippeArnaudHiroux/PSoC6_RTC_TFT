@@ -19,10 +19,21 @@ In this project a clock is made that you can set using the capsense sensor.
     * Timer interrupt
 
 ## How does it work
-Afther programing the PSoC 6 you can set the time by using the capsence slider. On the TFT-shield you can see what time is currently set on the PSoC. By sliding from the left to the right side of the capsence slider, you select the next time element (eg: From year to month, from month to day). By sliding from the right to the left side of the capsence slider, you can select the previous time element (eg: From month to year, from day to month)
-![Capsense flowchart](Documents/Capsense_Flowchart.jpg)
+### Time initialize
+In the photo below you see the start screen afther programming the PSoC.
+![TFT_Start_Screen](Documents/Photo/TFT_Start_Screen.jpg)
+By sliding from the left to the right side of the capsence slider, you select the next time element (eg: From year to month, from month to day). By sliding from the right to the left side of the capsence slider, you can select the previous time element (eg: From month to year, from day to month)
+![Capsense flowchart](Documents/Flowchart/Capsense_Flowchart.jpg)
 
 WIth the left capsence button (button 0) you can decrease your time element, and with the right capsence button (button 1) you can increase your time element.
+
+<details>
+  <summary>Flowchart of configuring year</summary>
+  ![Year_Flowchart](Documents/Flowchart/Year_Flowchart.jpg)
+</details>
+
+The values on the TFT-display will be updated and shown.
+![TFT_Set_Time](Documents/Photo/TFT_Set_Time.jpg)
 
 When you configured the right time, you can push the user button (sw2). By presing this button the RTC will set himself with this time. And the time will be displayed on the TFT-shield.
 

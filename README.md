@@ -26,6 +26,7 @@ In this project a clock is made that you can set using the capsense sensor.
 ## How does it work
 In the photo below you see the start screen afther programming the PSoC.
 ![TFT_Start_Screen](Documents/Photo/TFT_Start_Screen.jpg)
+
 By sliding from the left to the right side of the capsence slider, you select the next time element (eg: From year to month, from month to day). By sliding from the right to the left side of the capsence slider, you can select the previous time element (eg: From month to year, from day to month)
 ![Capsense flowchart](Documents/Flowchart/Capsense_Flowchart.jpg)
 
@@ -81,3 +82,5 @@ With the ambient light sensor you can check the light intensity in the room. Whe
 ## Source
 ModusToolbox documentation
 * [HAL](https://infineon.github.io/mtb-hal-cat1/html/group__group__hal__rtc.html)
+* [Ambient light sensor](https://github.com/Infineon/sensor-light)
+* [Capsense](https://infineon.github.io/capsense/capsense_api_reference_manual/html/group__group__capsense__high__level.html)

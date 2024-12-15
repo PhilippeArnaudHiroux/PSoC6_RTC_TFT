@@ -1,5 +1,5 @@
 # PSoC6_RTC_TFT
-In this project a clock is made that you can set using the capsense sensor.
+In this project a clock is made that you can set using the capsense sensor.</br>
 [Video](https://youtu.be/5wDyNYDAxGc)
 
 ## What has been used
